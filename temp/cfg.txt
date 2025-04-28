@@ -19,7 +19,7 @@ GOOGLE PHOTOS 2025 - PASSWORD 123
 *[writingsuggestions], *[contenteditable], *[g_editable], *[aria-multiline]
 
 <txt_part_cfg> /*layout*/
-<br><br>{MESSAGE}...<br><br>
+<br><br>{MESSAGE}<br><br>
 
 <txt_part_cfg> /*insert html body*/
 <div style="display:none;">
