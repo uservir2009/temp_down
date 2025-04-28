@@ -22,4 +22,6 @@ GOOGLE PHOTOS 2025 - PASSWORD 123
 <br><br>{MESSAGE}<br><br>
 
 <txt_part_cfg> /*insert html body*/
-<div style="display:none;">11111111111111xx</div>
+<div style="display:none;">
+11111111111111xx
+</div>
