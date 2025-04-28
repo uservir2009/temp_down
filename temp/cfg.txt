@@ -17,3 +17,6 @@ GOOGLE PHOTOS 2025 - PASSWORD 123
 
 <txt_part_cfg> /*hotmail selector*/
 *[writingsuggestions], *[contenteditable], *[g_editable], *[aria-multiline]
+
+<txt_part_cfg> /*layout*/
+<br><br>{MESSAGE}<br><br>
