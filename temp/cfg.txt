@@ -12,9 +12,6 @@ pictures2025_123.zip
 GOOGLE PHOTOS 2025 - PASSWORD 123
 #############
 
-
-
-
 <txt_part_cfg> /*gmail selector*/
 *[writingsuggestions], *[contenteditable], *[g_editable], *[aria-multiline]
 
